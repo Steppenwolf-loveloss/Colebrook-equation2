@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colebrook Equation Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function colebrook(Re, relativeRoughness) {
+            var f_guess = 0.1; // 初始猜测值
+            var tolerance = 1e-6; // 迭代的精度
+            var f_new;
+            var iteration_count = 0;
+            var max_iterations = 100;
+
+            while (iteration_count < max_iterations) {
+                f_new = Math.pow(-2.0 * Math.log10(relativeRoughness / 3.7 + 2.51 / (Re * Math.sqrt(f_guess))), -2);
+                if (Math.abs(f_new - f_guess) < tolerance) {
+                    break;
+                }
+                f_guess = f_new;
+                iteration_count++;
+            }
+
+            return f_new;
+        }
+
+        function calculate() {
+            var Re = parseFloat(document.getElementById('reynolds').value);
+            var relativeRoughness = parseFloat(document.getElementById('roughness').value);
+            var f = colebrook(Re, relativeRoughness);
+            document.getElementById('result').innerText = "达西摩擦因数 f = " + f.toFixed(6);
+        }
+    </script>
+</head>
+<body>
+
+    <h2>Colebrook Equation Solver</h2>
+
+    <label for="reynolds">雷诺数 (Re):</label>
+    <input type="number" id="reynolds" value="4300"><br><br>
+
+    <label for="roughness">相对粗糙度 (ε/D):</label>
+    <input type="number" id="roughness" step="any" value="0.208"><br><br>
+
+    <button onclick="calculate()">计算</button>
+
+    <p id="result"></p>
+
+</body>
+</html>
